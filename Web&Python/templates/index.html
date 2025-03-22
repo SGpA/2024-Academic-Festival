@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>낙상 관리 시스템</title>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+
+    <script>
+        // 데이터만 새로 가져오는 함수
+        function fetchData() {
+            $.ajax({
+                url: '/data', // 데이터를 가져오는 서버 엔드포인트
+                method: 'GET',
+                success: function (response) {
+                    // 최신 데이터로 업데이트
+                    if (response) {
+                        $('#current-data').text(response); // 텍스트 영역에 최신 데이터 반영
+
+                        // 문자열 길이가 54 이상일 때 경고 표시 및 소리 재생
+                        if (response.length > 54) {
+                            $('.warning-box').show(); // 빨간 박스 표시
+                            document.getElementById('alert-sound').play(); // 소리 재생
+                        } else {
+                            $('.warning-box').hide(); // 길이가 짧아지면 빨간 박스 숨김
+                        }
+                    }
+                }
+            });
+        }
+
+        $(document).ready(function () {
+            setInterval(fetchData, 700); // 1초마다 데이터 갱신
+        });
+    </script>
+
+    <style>
+        .warning-box {
+            display: none;
+            /* 초기에는 숨김 */
+            background-color: red;
+            /* 빨간색 배경 */
+            color: white;
+            /* 글자색을 흰색으로 */
+            padding: 10px;
+            /* 여백 추가 */
+            margin-top: 10px;
+            /* 위쪽 여백 */
+            font-size: large;
+            /* 글자 크기 */
+        }
+
+        .insurance-prescription-container {
+            display: flex;
+            justify-content: space-between;
+            /* 양쪽으로 간격을 줌 */
+            align-items: flex-start;
+            /* 세로 정렬 */
+            margin-bottom: 20px;
+            /* 아래쪽 여백 추가 */
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+
+        .container {
+            width: 900px;
+            margin: 20px auto;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .insurance-info {
+            margin-bottom: 20px;
+        }
+
+        .header,
+        .actions,
+        {}
+
+        .memo-section {
+            width: 860px;
+            margin-bottom: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header .profile {
+            display: flex;
+            align-items: center;
+        }
+
+        .header .profile img {
+            width: 100px;
+            height: 160px;
+            background-color: #ccc;
+            margin-right: 20px;
+        }
+
+        .header .info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .header .info input,
+        .insurance-info input,
+        .actions input {
+            padding: 5px;
+            border: 1px solid #ddd;
+            margin-bottom: 5px;
+        }
+
+        .header .info select {
+            padding: 5px;
+            border: 1px solid #ddd;
+            margin-bottom: 5px;
+        }
+
+        .insurance-info {
+            border-top: 1px solid #ddd;
+            padding-top: 20px;
+        }
+
+        .insurance-info h3 {
+            margin-bottom: 10px;
+        }
+
+        .insurance-info table {
+            display: inline-block;
+            width: 30%;
+            border-collapse: collapse;
+        }
+
+        .insurance-info table td {
+            padding: 5px;
+            border: 1px solid #ddd;
+        }
+
+        .memo-section textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            margin-bottom: 10px;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .actions .left-actions,
+        .actions .right-actions {
+            display: flex;
+            align-items: center;
+        }
+
+        .actions button {
+            padding: 5px 10px;
+            margin-right: 10px;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+        }
+
+        .actions button.delete {
+            background-color: #ff4444;
+        }
+
+        textarea {
+            border: 1px solid #ddd;
+            margin-left: 3px;
+        }
+
+        nav {
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            font-size: 20px;
+            background-color: gray;
+            height: 50px;
+        }
+
+        .noDeco {
+            display: flex;
+            text-decoration: none;
+        }
+
+        #data {
+            border: 2px solid black;
+        }
+
+        .text {
+            display: flex;
+            align-items: flex-start;
+        }
+    </style>
+</head>
+
+
+<body>
+    <!--    프로그램 명    -->
+    <h3 style="text-align: center;">낙상 관리 프로그램</h3>
+    <div class="container">
+        <!-- Header Section -->
+        <div class="header">
+            <div class="profile">
+                <img src="{{ url_for('static', filename='images/정우현.png') }}" width="170" height="200" alt="환자 이미지">
+                <div class="info">
+                    <label>이&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;름: <input type="text" value="정우현"
+                            disabled></label>
+                    <label>주민번호: <input type="text" value="011203-3******" disabled></label>
+                    <label>차트번호: <input type="text" value="12345" disabled></label>
+                    <label>전화번호: <input type="text" value="032-576-2051" disabled></label>
+                    <label>휴대전화: <input type="text" value="010-3356-2051" disabled></label>
+                    <label>주&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;소: <input type="text" value="인천광역시 서구 #####"
+                            disabled></label>
+                </div>
+                <div>
+                    <textarea id="current-data" style="font-size:large" cols="62" rows="10" readonly></textarea>
+                </div>
+            </div>
+        </div>
+
+        <!-- Insurance Info Section -->
+        <section class="insurance-info">
+            <h3>보험
+                정보&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;처방
+                기록</h3>
+            <table>
+                <tr>
+                    <td>구분</td>
+                    <td>
+                        <select id="보험" name="">
+                            <option value="health">건강국민보험</option>
+                            <option value="med">의료급여</option>
+                            <option value="old">노인장기요양보험</option>
+                            <option value="work">산재보험</option>
+                        </select>
+                    </td>
+                </tr>
+                <tr>
+                    <td>가입자</td>
+                    <td><input type="text" id="subscriber" placeholder="가입자명 입력"></td>
+                </tr>
+                <tr>
+                    <td>증번호</td>
+                    <td><input type="text" id="policyNumber" placeholder="증번호 입력"></td>
+                </tr>
+                <tr>
+                    <td>사업자</td>
+                    <td><input type="text" id="provider" placeholder="사업자명 입력"></td>
+                </tr>
+            </table>
+
+
+
+            <textarea style="width: 600px; height: 155px;" placeholder="처방 기록 입력하는 부분"></textarea>
+            </textarea>
+        </section>
+
+        <!-- Memo Section -->
+            <div class="memo-section">
+                <h3>환자 메모</h3>
+                <textarea placeholder="환자에 대한 메모를 입력하세요."></textarea>
+                <div class="warning-box">낙상 의심 환자 발생!</div> <!-- 경고 메시지 추가 -->
+            </div>
+
+        <audio id="alert-sound" src="{{ url_for('static', filename='sounds/경보음14.wav') }}" preload="auto"></audio>
+
+
+        <!-- Actions Section -->
+        <div class="actions">
+            <div class="right-actions">
+                <label><input type="checkbox"> 정보 제공 동의</label>
+                <label><input type="checkbox"> 알림톡</label>
+                <label><input type="checkbox"> 문자 동의</label>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
+
+
+
+
+<!--  {% if data %} {{ data[-1] }}{% endif %}-->
